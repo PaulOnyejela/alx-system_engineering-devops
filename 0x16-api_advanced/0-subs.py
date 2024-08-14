@@ -1,33 +1,22 @@
 #!/usr/bin/python3
 """
-This script queries the Reddit API and returns the number of total subscribers for a given subreddit.
+    Uses Reddit API to print the number of subscribers of a subreddit
 """
 import requests
-import sys
 
 
-def number_of_subscribers(subreddit: str) -> int:
+def number_of_subscribers(subreddit):
     """
-    Queries the Reddit API and returns the number of total subscribers for a
-    given subreddit.
-
-    :param subreddit: The subreddit to query.
-    :return: The number of subscribers, or 0 if an error occurs.
+    Get the number of subscribers for a given subreddit
     """
-    url = f'https://www.reddit.com/r/{subreddit}/about.json'
-    headers = {'User-Agent': 'Python/1.0 (Holberton School 0x16 task 0)'}
-    
-    try:
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raise an error for HTTP codes 4xx/5xx
-        data = response.json().get('data', {})
-        return data.get('subscribers', 0)
-    except (requests.RequestException, ValueError):
+    url = f"https://www.reddit.com/r/{subreddit}/about.json"
+    headers = {'user-agent': 'request'}
+    response = requests.get(url, headers=headers, allow_redirects=False)
+
+    if response.status_code != 200:
         return 0
 
+    data = response.json().get("data")
+    num_subs = data.get("subscribers")
 
-if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Please pass an argument for the subreddit to search.")
-    else:
-        print("{:d}".format(number_of_subscribers(sys.argv[1])))
+    return num_subs
